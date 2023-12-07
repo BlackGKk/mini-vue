@@ -1,0 +1,8 @@
+{
+  "name": "my-mini-vue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BlackGKk/mini-vue.git",
+  "author": "曾小钧 <xjzengt@isoftstone.com>",
+  "license": "MIT"
+}
