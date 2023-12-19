@@ -4,5 +4,17 @@
   "main": "index.js",
   "repository": "https://github.com/BlackGKk/mini-vue.git",
   "author": "曾小钧 <xjzengt@isoftstone.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/jest": "^29.5.11",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "typescript": "^5.3.3"
+  }
 }
