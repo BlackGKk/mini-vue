@@ -1,13 +1,14 @@
 import { track, trigger } from "./effect";
 import { ReactiveFlags, reactive, readonly } from "./reactive"
-import { isObject } from "../shared";
+import { extend, isObject } from "../shared";
 //常量化 避免每次都要创建get或set
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true,true)
 
 //创建get
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, shallow = false) {
     return function get(target, key) {
         if(key === ReactiveFlags.IS_REACTIVE) {
             return !isReadonly
@@ -15,6 +16,10 @@ function createGetter(isReadonly = false) {
             return isReadonly
         }
         const res = Reflect.get(target, key);
+
+        if (shallow) {
+            return res;
+        }
 
         // 看看res是不是obejct
         if(isObject(res)){
@@ -52,3 +57,8 @@ export const readonlyHandlers = {
         return true;
     }
 }
+
+// 浅只读
+export const shallowReadonlyHandlers = extend({},readonlyHandlers,{
+    get: shallowReadonlyGet
+})
