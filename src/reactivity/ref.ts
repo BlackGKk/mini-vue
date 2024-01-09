@@ -6,6 +6,7 @@ class RefImpl {
     private _value: any;
     public dep;
     private _rawValue: any;
+    public __v_isRef = true;
     constructor(value) {
         // 存储原始值，方便后续与新值对比
         this._rawValue = value;
@@ -42,4 +43,14 @@ function trackRefValue(ref) {
 
 export function ref(value) {
     return new RefImpl(value);
+}
+
+export function isRef(ref) {
+    return !!ref.__v_isRef
+}
+
+export function unRef(ref) {
+    // 看看是不是 ref -> ref.value
+    // ref
+    return isRef(ref)? ref.value : ref;
 }
