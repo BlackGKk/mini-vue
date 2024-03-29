@@ -16,17 +16,18 @@ function createGetter(isReadonly = false, shallow = false) {
             return isReadonly
         }
         const res = Reflect.get(target, key);
-
-        if (shallow) {
+        // 如果数据是浅层只读，那么不用做依赖收集和深层监听
+        if (isReadonly && shallow) {
             return res;
         }
 
-        // 看看res是不是obejct
+        // 看看res是不是obejct，继续对嵌套对象进行响应式数据监听
         if(isObject(res)){
             return isReadonly ? readonly(res) : reactive(res);  
         }
 
         if (!isReadonly) {
+            // 依赖收集
             track(target, key);
         }
         return res;
@@ -37,7 +38,7 @@ function createGetter(isReadonly = false, shallow = false) {
 function createSetter() {
     return function set(target, key, value) {
         const res = Reflect.set(target, key, value);
-
+        // 触发依赖
         trigger(target, key);
         return res;
     }

@@ -1,6 +1,6 @@
 import { extend } from "../shared";
 let activeEffect;
-let shouldTrack;
+let shouldTrack; // 解决 ++运算符触发 get -> track，只有在 set->trigger时触发 track
 
 export class ReactiveEffect {
     private _fn:any;
@@ -38,14 +38,17 @@ export class ReactiveEffect {
 
 //清除收集到的依赖
 function cleanupEffect (effect) {
+    // 通过反向收集到的 deps 集合，遍历获取当前的 activeEffect，一一删除
     effect.deps.forEach((dep: any) => {
         dep.delete(effect);
     });
+    // 当前的 activeEffect 不存在任何依赖关系
     effect.deps.length = 0;
 }
 
 const targetMap = new Map()
 export function track(target, key) {//依赖收集&追踪
+    // 如果当前不是 set->trigger->effect.run->fn()触发的 或者不存在 activeEffect，就不做依赖收集
     if(!isTracking()) return;
     // target -> key -> dep
     let depsMap = targetMap.get(target);
