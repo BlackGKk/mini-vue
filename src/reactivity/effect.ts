@@ -2,13 +2,15 @@ import { extend } from "../shared";
 let activeEffect;
 let shouldTrack;
 
-class ReactiveEffect {
+export class ReactiveEffect {
     private _fn:any;
     deps = [];
     active = true; //判断是否stop
     onStop?: () => void;
-    constructor(fn) {
+    public scheduler: Function | undefined;
+    constructor(fn,scheduler?: Function) {
         this._fn = fn;
+        this.scheduler = scheduler
     }
     run() {
         if(!this.active){
@@ -91,7 +93,7 @@ export function triggerEffects(dep) {
 
 export function effect(fn, options:any = {}) {
     // 创建一个实例存储fn
-    const _effect = new ReactiveEffect(fn);
+    const _effect = new ReactiveEffect(fn, options?.scheduler);
     //extend携带的options（如scheduler、onStop等）
     extend(_effect,options)
     _effect.run();
