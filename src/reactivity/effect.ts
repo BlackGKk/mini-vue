@@ -13,6 +13,7 @@ export class ReactiveEffect {
         this.scheduler = scheduler
     }
     run() {
+         // 调用stop后，防止往下走继续对 activeEffect 赋值，防止继续收集依赖
         if(!this.active){
             return this._fn();
         }
@@ -31,7 +32,7 @@ export class ReactiveEffect {
             if (this.onStop) {
                 this.onStop();
             }
-            this.active = false;
+            this.active = false; // 关闭依赖收集开关
         }
     }
 }
