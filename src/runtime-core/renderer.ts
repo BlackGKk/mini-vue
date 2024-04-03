@@ -1,3 +1,5 @@
+import { createComponentInstance, setupComponent } from "./component"
+
 export function render (vnode, container) {
     // patch
     // 
@@ -14,6 +16,10 @@ function processComponent (vnode, container) {
 }
 
 function mountComponent (vnode) {
-
+    const instance = createComponentInstance(vnode)
+    setupComponent(instance);
 }
+
+
+
 
