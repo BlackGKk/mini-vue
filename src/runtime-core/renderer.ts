@@ -10,6 +10,7 @@ function patch (vnode, container) {
     // 去处理组件
 
     // 判断是不是element
+    // processELement()
     processComponent(vnode, container)
 }
 
