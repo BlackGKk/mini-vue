@@ -47,6 +47,11 @@ function cleanupEffect (effect) {
     effect.deps.length = 0;
 }
 
+// 判断是否达到可以收集的条件
+export function isTracking() {
+    return shouldTrack && activeEffect != undefined;
+}
+
 const targetMap = new Map()
 export function track(target, key) {//依赖收集&追踪
     // 如果当前不是 set->trigger->effect.run->fn()触发的 或者不存在 activeEffect，就不做依赖收集
@@ -71,11 +76,6 @@ export function trackEffects(dep){
     if(dep.has(activeEffect)) return;
     dep.add(activeEffect);
     activeEffect.deps.push(dep)
-}
-
-// 判断是否达到可以收集的条件
-export function isTracking() {
-    return shouldTrack && activeEffect != undefined;
 }
 
 export function trigger (target, key){
