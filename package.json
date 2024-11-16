@@ -1,7 +1,6 @@
 {
   "name": "my-mini-vue",
   "version": "1.0.0",
-  "type": "module",
   "main": "lib/guide-mini-vue.cjs.js",
   "module": "lib/guide-mini-vue.esm.js",
   "repository": "https://github.com/BlackGKk/mini-vue.git",
@@ -12,9 +11,9 @@
     "build": "rollup -c rollup.config.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.6",
-    "@babel/preset-env": "^7.23.6",
-    "@babel/preset-typescript": "^7.23.3",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^29.5.11",
     "babel-jest": "^29.7.0",
