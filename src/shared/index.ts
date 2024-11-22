@@ -1,5 +1,7 @@
 export const extend = Object.assign
 
+export const EMPTY_OBJ = {}
+
 // 判断传入的值是否是object
 export const isObject = (val) => {
   return val != null && typeof val === 'object'
