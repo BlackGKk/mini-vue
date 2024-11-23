@@ -123,6 +123,7 @@ export function createRenderer(options) {
   }
 
   function mountElement(vnode, container, parentComponent) {
+    // 创建标签
     const el = (vnode.el = hostCreateElement(vnode.type))
     // 处理children
     const { children, shapeFlag } = vnode
@@ -130,31 +131,37 @@ export function createRenderer(options) {
       // string类型
       el.textContent = children
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-      // array类型进行遍历挂载
+      // array类型以新建的 el 作为父容器进行遍历挂载
       mountChildren(vnode.children, el, parentComponent)
     }
-    // 处理props
+    // 处理props,设置标签属性
     const { props } = vnode
     for (const key in props) {
       const val = props[key]
       hostPatchProp(el, key, null, val)
     }
+    // 新标签添加到容器标签内部
     hostInsert(el, container)
   }
 
   function mountChildren(children, container, parentComponent) {
     children.forEach((v) => {
+      // 此时的 container 已经由 rootContainer 变成了新建的 el
       patch(null, v, container, parentComponent)
     })
   }
 
   function processComponent(n1, n2, container, parentComponent) {
+    // 挂载组件
     mountComponent(n2, container, parentComponent)
   }
 
   function mountComponent(initialVNode, container, parentComponent) {
+    // 创建组件实例 instance
     const instance = createComponentInstance(initialVNode, parentComponent)
+    // 安装组件
     setupComponent(instance)
+    // 执行组件 render 函数，把返回的 vnode 再次传给 patch 递归
     setupRenderEffect(instance, initialVNode, container, parentComponent)
   }
 
@@ -167,7 +174,7 @@ export function createRenderer(options) {
         const subTree = (instance.subTree = instance.render.call(proxy))
         // vnode -> patch
         // vnode -> element -> mountElement
-        patch(null, subTree, container, instance)
+        patch(null, subTree, container, instance) // 把 render 返回的子 vnode 传给 patch 渲染
         initialVNode.el = subTree.el
         instance.isMounted = true
       } else {
