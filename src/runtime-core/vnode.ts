@@ -8,10 +8,12 @@ export function createVNode (type, props?, children?) {
         type,
         props,
         children,
-        shapeFlag: getShapeFlags(type),
+        shapeFlag: getShapeFlags(type), // 初步根据 type 判断 shapeFlag
         el: null
     }
+    // 针对 children 进一步判断 shapeFlag
     if(typeof children ==="string") {
+        // 使用 | 运算符，这样就能兼顾 type 和 children
         vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
     }else if(Array.isArray(children) ) {
         vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
