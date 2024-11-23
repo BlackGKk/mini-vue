@@ -15,6 +15,7 @@ export const PublicInstanceProxyHandlers = {
     }else if(hasOwn(props,key)) {
       return props[key];
     }
+    // 在这里统一处理 $el、$props 等对象
     const publicGetter = publicPropertiesMap[key]
     if(publicGetter) {
       return publicGetter(instance)

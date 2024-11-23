@@ -33,7 +33,7 @@ export function setupComponent (instance) {
 
 function setupStatefulComponent (instance) {
     const Component = instance.type
-
+    // 实现组件对象的代理
     instance.proxy = new Proxy({ _:instance }, PublicInstanceProxyHandlers)
 
     const { setup } = Component
@@ -41,7 +41,7 @@ function setupStatefulComponent (instance) {
         setCurrentInstance(instance)
         const setupResult = setup(shallowReadonly(instance.props),{emit: instance.emit})
         setCurrentInstance(null)
-
+        // 处理 setup 函数的返回结果
         handleSetupResult(instance,setupResult)
     }
 }
