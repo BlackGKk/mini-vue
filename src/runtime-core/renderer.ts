@@ -175,6 +175,7 @@ export function createRenderer(options) {
         // vnode -> patch
         // vnode -> element -> mountElement
         patch(null, subTree, container, instance) // 把 render 返回的子 vnode 传给 patch 渲染
+        // 经过 patch 之后，subTree 获得了 el
         initialVNode.el = subTree.el
         instance.isMounted = true
       } else {
