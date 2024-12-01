@@ -2,6 +2,7 @@ import { effect } from '../reactivity/effect'
 import { EMPTY_OBJ } from '../shared'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
+import { shouldUpdateComponent } from './componentUpdateUtils'
 import { createAppAPI } from './createApp'
 import { Fragment, Text } from './vnode'
 
@@ -20,6 +21,8 @@ export function createRenderer(options) {
   }
   // n1 -> 旧的虚拟节点  n2 -> 新的虚拟节点
   function patch(n1, n2, container, parentComponent, anchor) {
+    console.log(n2);
+    
     const { shapeFlag, type } = n2
     switch (type) {
       case Fragment:
@@ -276,13 +279,28 @@ export function createRenderer(options) {
   }
 
   function processComponent(n1, n2, container, parentComponent, anchor) {
-    // 挂载组件
-    mountComponent(n2, container, parentComponent, anchor)
+    if (!n1) {
+      // 挂载组件
+      mountComponent(n2, container, parentComponent, anchor);
+    } else {
+      updateComponent(n1, n2);
+    }
+  }
+
+  function updateComponent (n1, n2) {
+    const instance = (n2.component = n1.component);
+    if(shouldUpdateComponent(n1,n2)) {
+      instance.next = n2;
+      instance.update();
+    }else {
+      n2.el = n1.el;
+      instance.vnode = n2; 
+    }
   }
 
   function mountComponent(initialVNode, container, parentComponent, anchor) {
     // 创建组件实例 instance
-    const instance = createComponentInstance(initialVNode, parentComponent)
+    const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent))
     // 安装组件
     setupComponent(instance)
     // 执行组件 render 函数，把返回的 vnode 再次传给 patch 递归
@@ -291,7 +309,7 @@ export function createRenderer(options) {
 
   function setupRenderEffect(instance, initialVNode, container, parentComponent, anchor) {
     // 虚拟节点树
-    effect(() => {
+    instance.update = effect(() => {
       if (!instance.isMounted) {
         const { proxy } = instance
         // 使render的this指向proxy
@@ -303,6 +321,13 @@ export function createRenderer(options) {
         initialVNode.el = subTree.el
         instance.isMounted = true
       } else {
+        console.log("update")
+        const {next, vnode} = instance
+        if (next) {
+          next.el = vnode.el
+          updateComponentPreRender(instance,next)
+        }
+
         const { proxy } = instance
         const subTree = instance.render.call(proxy)
         const preSubTree = instance.subTree
@@ -317,6 +342,12 @@ export function createRenderer(options) {
   return {
     createApp: createAppAPI(render),
   }
+}
+
+function updateComponentPreRender (instance, nextVnode) {
+  instance.vnode = nextVnode;
+  instance.next = null;
+  instance.props = nextVnode.props;
 }
 
 // 求最长递增序列算法
