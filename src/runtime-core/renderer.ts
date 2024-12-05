@@ -314,7 +314,7 @@ export function createRenderer(options) {
       if (!instance.isMounted) {
         const { proxy } = instance
         // 使render的this指向proxy
-        const subTree = (instance.subTree = instance.render.call(proxy))
+        const subTree = (instance.subTree = instance.render.call(proxy, proxy))
         // vnode -> patch
         // vnode -> element -> mountElement
         patch(null, subTree, container, instance, anchor) // 把 render 返回的子 vnode 传给 patch 渲染
@@ -330,7 +330,7 @@ export function createRenderer(options) {
         }
 
         const { proxy } = instance
-        const subTree = instance.render.call(proxy)
+        const subTree = instance.render.call(proxy, proxy)
         const preSubTree = instance.subTree
         instance.subTree = subTree
 
