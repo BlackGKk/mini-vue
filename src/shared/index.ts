@@ -7,6 +7,10 @@ export const isObject = (val) => {
   return val != null && typeof val === 'object'
 }
 
+export const isString = (val) => {
+  return typeof(val) === "string"
+}
+
 // 判断旧值和新值是否发生改变
 export const hasChanged = (val, newVal) => {
   return !Object.is(val, newVal)

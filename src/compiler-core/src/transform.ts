@@ -13,7 +13,12 @@ export function transform (root, options = {}) {
 }
 
 function createRootCodegen(root:any, context: any) {
-  root.codegenNode = root.children[0]
+  const child = root.children[0]
+  if(child.type === NodeTypes.ELEMENT) {
+    root.codegenNode = child.codegenNode
+  } else {
+    root.codegenNode = root.children[0]
+  }
 }
 
 function createTransformContext(root: any, options: any):any {
@@ -22,21 +27,22 @@ function createTransformContext(root: any, options: any):any {
     nodeTransforms: options.nodeTransforms || [],
     helpers: new Map(),
     helper(key) {
-      context.helpers.set(key,1)
+      context.helpers.set(key,1)      
     }
   };
   return context
 }
 
 function traverseNode(node: any, context) {
-  console.log(node);
   // 遍历调用所有的 nodeTransforms
   // 把 node 给到 transform
   // 用户可以对 node 做处理
   const nodeTransforms = context.nodeTransforms
+  const exitFns:any = []
   for (let i = 0; i < nodeTransforms.length; i++) {
     const transform = nodeTransforms[i];
-    transform(node);
+    const onExit = transform(node, context);
+    if(onExit) exitFns.push(onExit);
   }
 
   switch (node.type) {
@@ -51,7 +57,11 @@ function traverseNode(node: any, context) {
   
     default:
       break;
-  }  
+  }
+  let i = exitFns.length;
+  while (i--) {
+    exitFns[i]()
+  }
 }
 function traverseChildren(node: any, context: any) {
   const children = node.children;
